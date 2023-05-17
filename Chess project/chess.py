@@ -150,6 +150,7 @@ def all_valid_moves(piece_type,piece_color,row,col,board):
             new_col = col + dx
             if (0 <= new_row < 8 and 0 <= new_col < 8) and (board[new_row][new_col] == " " or board[new_row][new_col][0] != piece_color) and not check_for_check(row,col,new_row,new_col,board):
                 valid_moves.append((new_row,new_col))
+            
         pass
     elif piece_type == "queen":
         # Check for valid moves in all 8 directions
@@ -247,6 +248,32 @@ def highlight_valid_moves(piece_type, piece_color, row, col, board):
     valid_moves = all_valid_moves(piece_type, piece_color, row, col, board)
     for move in valid_moves:
         pygame.draw.rect(board_surface, (0, 255, 0), (move[1]*square_size, move[0]*square_size, square_size, square_size), width=3)
+    if piece_type == "king":
+        #castling rules
+        #1.The king is not currently in check.
+        #2.Neither the king nor the rook has previously moved.
+        #3.There are no pieces between the king and the rook.
+        #4.The king does not pass through or finish on a square that is attacked by an enemy piece.
+        #check for white long casling 
+        if white_turn and check(board)[3] != "w" and not wking_moved and not w0rook_moved and board[0][1] == " " and board[0][2] == " "  and board[0][3] == " " and not check_for_check(0,4,0,2,board) and not check_for_check(0,4,0,3,board):
+            valid_moves.append((0,2))
+            #highlight in orange
+            pygame.draw.rect(board_surface, (0,0,255), (2*square_size, 0*square_size, square_size, square_size), width=4)
+        #check for white short casling 
+        if white_turn and check(board)[3] != "w" and not wking_moved and not w7rook_moved and board[0][5] == " " and board[0][6] == " " and not check_for_check(0,4,0,5,board) and not check_for_check(0,4,0,6,board):
+            valid_moves.append((0,6))
+            #highlight in orange
+            pygame.draw.rect(board_surface, (0,0,255), (6*square_size, 0*square_size, square_size, square_size), width=4)
+        #check for black long casling 
+        if not white_turn and check(board)[3] != "b" and not bking_moved and not b0rook_moved and board[7][1] == " " and board[7][2] == " "  and board[0][3] == " " and not check_for_check(7,4,7,2,board) and not check_for_check(7,4,7,3,board):
+            valid_moves.append((7,2))
+            #highlight in orange
+            pygame.draw.rect(board_surface, (0,0,255), (2*square_size, 7*square_size, square_size, square_size), width=4)
+        #check for black short casling 
+        if not white_turn and check(board)[3] != "b" and not bking_moved and not b7rook_moved and board[7][5] == " " and board[7][6] == " " and not check_for_check(7,4,7,5,board) and not check_for_check(7,4,7,6,board):
+            valid_moves.append((7,6))
+            #highlight in orange
+            pygame.draw.rect(board_surface, (0,0,255), (6*square_size, 7*square_size, square_size, square_size), width=4)
     return valid_moves
 
 def set_board(board):
@@ -385,6 +412,12 @@ prev_click = None
 white_turn = True
 piece_moved = False
 in_check = False
+bking_moved = False
+wking_moved = False
+b0rook_moved = False
+b7rook_moved = False
+w0rook_moved = False
+w7rook_moved = False
 
 while True:
     for event in pygame.event.get():
@@ -413,7 +446,7 @@ while True:
                     # Move the piece to the clicked square
                     board[selected_row][selected_col] = board[prev_click[0]][prev_click[1]]
                     board[prev_click[0]][prev_click[1]] = " "
-                    #check if piece was pawn
+                    #check if piece was pawn to prep for promotion
                     if board[selected_row][selected_col][1:] == "pawn":
                         #if white and at row 7 change to queen
                         if board[selected_row][selected_col][0] == "w" and selected_row == 7:
@@ -421,6 +454,37 @@ while True:
                         #if black and at row 0 change to queen
                         if board[selected_row][selected_col][0] == "b" and selected_row == 0:
                             board[selected_row][selected_col] = "bqueen"
+                    #set up for castling
+                    #move rook for white long castling
+                    if board[selected_row][selected_col] == "wking" and prev_click[1] == 4 and selected_col == 2:
+                        board[0][3] = "wrook"
+                        board[0][0] = " "
+                    #move rook for white short castling
+                    if board[selected_row][selected_col] == "wking" and prev_click[1] == 4 and selected_col == 6:
+                        board[0][5] = "wrook"
+                        board[0][7] = " "
+                    #move rook for black long castling
+                    if board[selected_row][selected_col] == "bking" and prev_click[1] == 4 and selected_col == 2:
+                        board[0][3] = "brook"
+                        board[0][0] = " "
+                    #move rook for black short castling
+                    if board[selected_row][selected_col] == "bking" and prev_click[1] == 4 and selected_col == 6:
+                        board[7][5] = "brook"
+                        board[7][7] = " "
+                    #if rook or king moves set their move equal to true
+                    if board[selected_row][selected_col] == "bking":
+                        bking_moved = True
+                    if board[selected_row][selected_col] == "wking":
+                        wking_moved = True
+                    if board[selected_row][selected_col] == "brook" and prev_click[0] == 0:
+                         b0rook_moved = True
+                    if board[selected_row][selected_col] == "brook" and prev_click[0] == 7:
+                         b7rook_moved = True
+                    if board[selected_row][selected_col] == "wrook" and prev_click[0] == 0:
+                         w0rook_moved = True
+                    if board[selected_row][selected_col] == "wrook" and prev_click[0] == 7:
+                         w7rook_moved = True 
+                     
                     piece_moved = True
                 set_board(board)
                 if piece_moved:
