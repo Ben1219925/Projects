@@ -1,6 +1,59 @@
 import pygame
 import sys
 import copy
+import stockfish
+
+def start_menu():
+    font = pygame.font.Font(None, 36)
+    text1 = font.render("1. Play against the computer", True, (0, 0, 0))
+    text2 = font.render("2. Play against a friend", True, (0, 0, 0))
+    option1_rect = text1.get_rect(center=(board_size/2, board_size/2 - text1.get_height()))
+    option2_rect = text2.get_rect(center=(board_size/2, board_size/2 + text2.get_height()))
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:  # Left mouse button
+                    # Check if the mouse click is within the button bounds
+                    if option1_rect.collidepoint(event.pos):
+                        # Option 1: Play against the computer
+                        return "computer"
+                    elif option2_rect.collidepoint(event.pos):
+                        # Option 2: Play against a human
+                        return "multiplayer"
+        
+        # Draw the menu options on the screen
+        board_surface.fill((255, 255, 255))
+        board_surface.blit(text1, option1_rect)
+        board_surface.blit(text2, option2_rect)
+        
+        pygame.display.flip()
+
+def computer_level_menu():
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if pygame.K_0 <= event.key <= pygame.K_9:
+                    level = event.key - pygame.K_0  # Map key to corresponding level
+                    return level
+                elif event.key == pygame.K_ESCAPE:
+                    # Return to previous menu if Escape key is pressed
+                    return None
+
+        # Draw the level options on the screen
+        board_surface.fill((255, 255, 255))
+        font = pygame.font.Font(None, 36)
+        levels = ["Level 0", "Level 5", "Level 10", "Level 15", "Level 20"]
+        for i, level in enumerate(levels):
+            text = font.render(f"{i}. {level}", True, (0, 0, 0))
+            board_surface.blit(text, (board_size/2 - text.get_width()/2, board_size/2 - text.get_height()/2 + i*50))
+
+        pygame.display.flip()
 
 def find_bking(board):
     for row in range(8):
@@ -406,7 +459,11 @@ square_size = board_size // 8
 
 set_board(starting_board)
 
-# Main game loop
+# Create an instance of Stockfish engine
+engine = stockfish.Stockfish("/stockfish_15.1_win_x64_avx2/stockfish_15.1_win_x64_avx2/stockfish-windows-2022-x86-64-avx2.exe")
+
+# Set Stockfish parameters
+
 board = copy.deepcopy(starting_board)
 prev_click = None
 white_turn = True
@@ -419,7 +476,22 @@ b7rook_moved = False
 w0rook_moved = False
 w7rook_moved = False
 
+#start menu loop
 while True:
+    option = start_menu()
+    if option == "computer":
+        level = computer_level_menu()
+        if level is not None:
+            # Start the game with the selected computer level
+            engine.set_parameters({"Skill Level": level})
+            break
+    else:
+        break
+        
+#game loop
+while True:
+    if option == "computer":
+        engine.start()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
