@@ -1,34 +1,43 @@
 import pygame
 import sys
-import copy
 import numpy as np
+from PyQt5.QtGui import QIcon
 #import stockfish
 
 def start_menu():
-    font = pygame.font.Font(None, 36)
-    text1 = font.render("1. Practice one player", True, (0, 0, 0))
-    text2 = font.render("2. Play against a friend", True, (0, 0, 0))
-    option1_rect = text1.get_rect(center=(board_size/2, board_size/2 - text1.get_height()))
-    option2_rect = text2.get_rect(center=(board_size/2, board_size/2 + text2.get_height()))
+    font = pygame.font.Font(None, 50)
+    one_player = font.render("Single player", True, (255, 255, 255))
+    two_player = font.render("Multiplayer", True, (255, 255, 255))
+    quit_game = font.render("Exit", True, (255,255,255))
+    one_player_rect = one_player.get_rect(center=(board_size/1.5, board_size/2 - 3*one_player.get_height()))
+    two_player_rect = two_player.get_rect(center=(board_size/1.5, board_size/2 - two_player.get_height()))
+    quit_rect = quit_game.get_rect(center=(board_size/1.5,board_size/2 + quit_game.get_height()))
+    # Load the image for the background
+    background_image = pygame.image.load("images/start_background.jpg")
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:  # Left mouse button
-                    # Check if the mouse click is within the button bounds
-                    if option1_rect.collidepoint(event.pos):
-                        # Option 1: Play against the computer
-                        return "single"
-                    elif option2_rect.collidepoint(event.pos):
-                        # Option 2: Play against a human
-                        return "multiplayer"
+                # Check if the mouse click is within the button bounds
+                if one_player_rect.collidepoint(event.pos):
+                    # Option 1: Play against the computer
+                    return "single"
+                elif two_player_rect.collidepoint(event.pos):
+                    # Option 2: Play against a human
+                    return "multiplayer"
+                elif quit_rect.collidepoint(event.pos):
+                    pygame.quit()
+                    sys.exit()
         
+        # Draw the background image onto the screen
+        board_surface.blit(background_image, (0, 0))
         # Draw the menu options on the screen
-        board_surface.fill((255, 255, 255))
-        board_surface.blit(text1, option1_rect)
-        board_surface.blit(text2, option2_rect)
+        board_surface.blit(one_player, one_player_rect)
+        board_surface.blit(two_player, two_player_rect)
+        board_surface.blit(quit_game, quit_rect)
         
         pygame.display.flip()
     
@@ -65,16 +74,14 @@ def wpromotion_menu(piece_x,piece_y):
                 pygame.quit()
                 sys.exit()
             # Check for button clicks
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = pygame.mouse.get_pos()
-    
-                if queen_button.collidepoint(mouse_pos):
+            if event.type == pygame.MOUSEBUTTONDOWN:    
+                if queen_button.collidepoint(event.pos):
                     return "wqueen"
-                elif bishop_button.collidepoint(mouse_pos):
+                elif bishop_button.collidepoint(event.pos):
                     return "wbishop"
-                elif rook_button.collidepoint(mouse_pos):
+                elif rook_button.collidepoint(event.pos):
                     return "wrook"
-                elif knight_button.collidepoint(mouse_pos):
+                elif knight_button.collidepoint(event.pos):
                     return "wknight"
                     
         # Draw the background surface onto the screen
@@ -131,16 +138,14 @@ def bpromotion_menu(piece_x, piece_y):
                 pygame.quit()
                 sys.exit()
             # Check for button clicks
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = pygame.mouse.get_pos()
-    
-                if queen_button.collidepoint(mouse_pos):
+            if event.type == pygame.MOUSEBUTTONDOWN:    
+                if queen_button.collidepoint(event.pos):
                     return "bqueen"
-                elif bishop_button.collidepoint(mouse_pos):
+                elif bishop_button.collidepoint(event.pos):
                     return "bbishop"
-                elif rook_button.collidepoint(mouse_pos):
+                elif rook_button.collidepoint(event.pos):
                     return "brook"
-                elif knight_button.collidepoint(mouse_pos):
+                elif knight_button.collidepoint(event.pos):
                     return "bknight"
                     
         if option == "single":
@@ -362,7 +367,7 @@ def check_for_check(row, col, new_row, new_col, board):
    True if the move would put the king into check, False otherwise.
    """
    # Make a copy of the board so that we don't modify the original board.
-   new_board = copy.deepcopy(board)
+   new_board = np.copy(board)
    # Move the piece to the new location.
    new_board[new_row][new_col] = new_board[row][col]
    new_board[row][col] = " "
@@ -654,6 +659,7 @@ def stalemate(board):
         if no_moves:
             return True
     return False
+
 pygame.init()
 
 # Set up the board surface
@@ -684,14 +690,8 @@ piece_images = {}
 for color in ("white", "black"):
     for piece_type in ("king", "queen", "rook", "bishop", "knight", "pawn"):
         piece_images[(color, piece_type)] = pygame.image.load(f"images/{color}_{piece_type}.png")
-# elif option == "multiplayer":
-#     # Load the images for the pieces
-#     piece_images = {}
-#     for piece_type in ("king", "queen", "rook", "bishop", "knight", "pawn"):
-#         piece_images[("white", piece_type)] = pygame.image.load(f"images/mult_white_{piece_type}.png")
-#         piece_images[("black", piece_type)] = pygame.image.load(f"images/mult_black_{piece_type}.png")
 
-board = copy.deepcopy(starting_board)
+board = np.copy(starting_board)
 set_board(board)
 
 # # Create an instance of Stockfish engine
@@ -700,7 +700,6 @@ set_board(board)
 prev_click = None
 white_turn = True
 piece_moved = False
-in_check = False
 bking_moved = False
 wking_moved = False
 b0rook_moved = False
@@ -718,22 +717,18 @@ while True:
             sys.exit()
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if prev_click is None:  # first click
-                #get click position
-                piece_mouse_pos = pygame.mouse.get_pos()
                 # Determine the row and column of the click on the board
-                row = piece_mouse_pos[1] // square_size
-                col = piece_mouse_pos[0] // square_size
+                row = event.pos[1] // square_size
+                col = event.pos[0] // square_size
                 piece_type = board[row][col][1:]
                 piece_color = board[row][col][0]
                 if (piece_color == 'w' and white_turn) or (piece_color == 'b' and not white_turn):
                     valid_moves = highlight_valid_moves(piece_type, piece_color, row, col, board)
                     prev_click = (row, col)
             else:  # second click
-                #get click position
-                piece_mouse_pos = pygame.mouse.get_pos()
                 # Determine the row and column of the click on the board
-                selected_row = piece_mouse_pos[1] // square_size
-                selected_col = piece_mouse_pos[0] // square_size
+                selected_row = event.pos[1] // square_size
+                selected_col = event.pos[0] // square_size
                 if (selected_row, selected_col) in valid_moves:
                     # Move the piece to the clicked square
                     board[selected_row][selected_col] = board[prev_click[0]][prev_click[1]]
@@ -741,7 +736,7 @@ while True:
                     #check if piece was pawn
                     if board[selected_row][selected_col][1:] == "pawn":
                         if board[selected_row][selected_col][0] == "w":
-                            if abs((selected_row - prev_click[0])) == 2 and (board[selected_row][selected_col -1] == "bpawn" or board[selected_row][selected_col +1] == "bpawn"):
+                            if abs((selected_row - prev_click[0])) == 2 and ((selected_col > 0 and board[selected_row][selected_col -1] == "bpawn") or (selected_col < 7 and board[selected_row][selected_col +1] == "bpawn")):
                                 en_passant = True
                                 en_passant_col = selected_col
                             if abs(selected_col - prev_click[1]) == 1 and en_passant:
@@ -751,7 +746,7 @@ while True:
                                     board[selected_row-1][selected_col] = " "
                             
                         if board[selected_row][selected_col][0] == "b":
-                            if abs((selected_row - prev_click[0])) == 2 and (board[selected_row][selected_col -1] == "wpawn" or board[selected_row][selected_col +1] == "wpawn"):
+                            if abs((selected_row - prev_click[0])) == 2 and ((selected_col > 0 and board[selected_row][selected_col -1] == "wpawn") or (selected_col < 7 and board[selected_row][selected_col +1] == "wpawn")):
                                 en_passant = True
                                 en_passant_col = selected_col
                             if abs(selected_col - prev_click[1]) == 1 and en_passant:
@@ -765,11 +760,11 @@ while True:
                                     en_passant_turn = 0
                         #if pawn reaches the end of the board promote
                         if board[selected_row][selected_col][0] == "w" and (selected_row == 7 or selected_row == 0):
-                            promotion_piece = wpromotion_menu(piece_mouse_pos[0],piece_mouse_pos[1])
+                            promotion_piece = wpromotion_menu(event.pos[0],event.pos[1])
                             board[selected_row][selected_col] = promotion_piece
                         #if pawn reaches the end of the board promote
                         if board[selected_row][selected_col][0] == "b" and (selected_row == 0 or selected_row == 7):
-                            promotion_piece = bpromotion_menu(piece_mouse_pos[0],piece_mouse_pos[1])
+                            promotion_piece = bpromotion_menu(event.pos[0],event.pos[1])
                             board[selected_row][selected_col] = promotion_piece
                     #set up for castling
                     #move rook for white long castling
@@ -819,7 +814,6 @@ while True:
                 prev_click = None
                 valid_moves = []
             
-                print(en_passant_turn)
                 if en_passant_turn >=2:
                     en_passant_turn = 0
                     en_passant = False
@@ -862,9 +856,13 @@ while True:
                 if button_rect.collidepoint(event.pos):
                     #reset the game
                     set_board(starting_board)
-                    board = copy.deepcopy(starting_board)
+                    board = np.copy(starting_board)
                     show_menu = False
                     white_turn = True
+                    b0rook_moved = False
+                    b7rook_moved = False
+                    w0rook_moved = False
+                    w7rook_moved = False
         if stalemate(board):
             show_menu = True
             #set up end menu
@@ -898,8 +896,12 @@ while True:
                 if button_rect.collidepoint(event.pos):
                     #reset the game
                     set_board(starting_board)
-                    board = copy.deepcopy(starting_board)
+                    board = np.copy(starting_board)
                     show_menu = False
+                    b0rook_moved = False
+                    b7rook_moved = False
+                    w0rook_moved = False
+                    w7rook_moved = False
         
 
         pygame.display.flip()
