@@ -1,4 +1,4 @@
-This is a fully functioning Chess game designed for both multiplayer and single payer vs the computer.
+This is a fully functioning Chess game designed for both multiplayer and single player vs the computer.
 In order to have the single player work, you will need to install stockfish onto your computer, and you will also likely need to pip install stockfish and pygame.
 
 The version of stockfish used for this program can be found and downloaded here: https://stockfishchess.org/files/stockfish_15.1_win_x64.zip
