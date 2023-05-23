@@ -1,0 +1,6 @@
+This is a fully functioning Chess game designed for both multiplayer and single payer vs the computer.
+In order to have the single player work, you will need to install stockfish onto your computer, and you will likely need to pip install stockfish and pygame.
+
+The version of stockfish used for this program can be found and downloaded here: https://stockfishchess.org/files/stockfish_15.1_win_x64.zip
+The folder should be unzipped and placed in the Chess project/src directory
+The file path used in the .py program is "stockfish_15.1_win_x64/stockfish-windows-2022-x86-64.exe" so ensure that your version is correctly installed in the correct place.
