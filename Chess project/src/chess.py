@@ -3,7 +3,6 @@ import sys
 import numpy as np
 import stockfish
 
-#convert from board matrix to FEN
 def board_to_fen(board):
     """
     converts board matrix into FEN string to setup for Stockfish functions.
@@ -102,8 +101,10 @@ def board_to_fen(board):
     return fen
                 
 
-#convert best move to matrix board notation
 def fen_to_board(move):
+    """
+    Function to convert a FEN move into the matrix board format
+    """
     col_map = {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6, 'h': 7}
     row = abs(int(move[1])-8)
     col = col_map[move[0]]
@@ -115,6 +116,10 @@ def fen_to_board(move):
 
 #MENUS
 def start_menu():
+    """
+    Start menu for the game with options for single player, multiplayer, and exit
+    includes background image
+    """
     font = pygame.font.Font(None, 50)
     one_player = font.render("Single player", True, (255, 255, 255))
     two_player = font.render("Multiplayer", True, (255, 255, 255))
@@ -150,8 +155,79 @@ def start_menu():
         board_surface.blit(quit_game, quit_rect)
         
         pygame.display.flip()
+        
+def computer_level_menu():
+    """
+    menu to decide the level of the stockfish computer, includes option for
+    level 1 (level 0)
+    level 2 (level 5)
+    level 3 (level 10)
+    level 4 (level 15)
+    level 5 (level 20)
+    """
+    # Set up colors
+    BLACK = (0, 0, 0)
+    GRAY = (128, 128, 128)
+    
+    # Set up fonts
+    FONT = pygame.font.Font(None, 32)
+    
+    # Set up buttons
+    button_texts = ["Level 1", "Level 2", "Level 3", "Level 4", "Level 5"]
+    buttons = []
+    button_width = 200
+    button_height = 40
+    spacing = 20
+    total_button_height = len(button_texts) * button_height + (len(button_texts) - 1) * spacing
+    start_y = (board_size - total_button_height) // 2
+    for i, text in enumerate(button_texts):
+        button_x = (board_size - button_width) // 2
+        button_y = start_y + i * (button_height + spacing)
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)        
+        button = {"rect": button_rect, "text": text}
+        buttons.append(button)
+    background_image = pygame.image.load("images/computer_level.jpg")
+
+    
+    # Game loop
+    while True:
+        # Handle events
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                for button in buttons:
+                    if button["rect"].collidepoint(event.pos):
+                        # Perform actions based on button click
+                        if button["text"] == "Level 1":
+                            return 0
+                        elif button["text"] == "Level 2":
+                            return 5
+                        elif button["text"] == "Level 3":
+                            return 10
+                        elif button["text"] == "Level 4":
+                            return 15
+                        elif button["text"] == "Level 5":
+                            return 20
+    
+        # Draw the background image onto the screen
+        board_surface.blit(background_image, (0, 0))    
+        # Draw buttons
+        for button in buttons:
+            pygame.draw.rect(board_surface, GRAY, button["rect"])
+            pygame.draw.rect(board_surface, BLACK, button["rect"], 2)
+            text_surf = FONT.render(button["text"], True, BLACK)
+            text_rect = text_surf.get_rect(center=button["rect"].center)
+            board_surface.blit(text_surf, text_rect)
+    
+        # Update the display
+        pygame.display.flip()        
     
 def wpromotion_menu(piece_x,piece_y):
+    """
+    Promotion menu for white pawn to decide promotion piece type.
+    """
     queen_img = piece_images["white","queen"]
     bishop_img = piece_images["white","bishop"]
     knight_img = piece_images["white","knight"]
@@ -208,6 +284,9 @@ def wpromotion_menu(piece_x,piece_y):
             
     
 def bpromotion_menu(piece_x, piece_y):
+    """
+    Promotion menu for black pawn to decide promotion piece type.
+    """
     queen_img = piece_images["black","queen"]
     bishop_img = piece_images["black","bishop"]
     knight_img = piece_images["black","knight"]
@@ -271,71 +350,30 @@ def bpromotion_menu(piece_x, piece_y):
     
         # Update the display
         pygame.display.flip()
-        
-def computer_level_menu():
-    # Set up colors
-    WHITE = (255, 255, 255)
-    BLACK = (0, 0, 0)
-    GRAY = (128, 128, 128)
-    
-    # Set up fonts
-    FONT = pygame.font.Font(None, 32)
-    
-    # Set up buttons
-    button_texts = ["Level 1", "Level 2", "Level 3", "Level 4", "Level 5"]
-    buttons = []
-    button_width = 200
-    button_height = 40
-    spacing = 20
-    total_button_height = len(button_texts) * button_height + (len(button_texts) - 1) * spacing
-    start_y = (board_size - total_button_height) // 2
-    for i, text in enumerate(button_texts):
-        button_x = (board_size - button_width) // 2
-        button_y = start_y + i * (button_height + spacing)
-        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)        
-        button = {"rect": button_rect, "text": text}
-        buttons.append(button)
-    background_image = pygame.image.load("images/computer_level.jpg")
-
-    
-    # Game loop
-    while True:
-        # Handle events
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                for button in buttons:
-                    if button["rect"].collidepoint(event.pos):
-                        # Perform actions based on button click
-                        if button["text"] == "Level 1":
-                            return 0
-                        elif button["text"] == "Level 2":
-                            return 5
-                        elif button["text"] == "Level 3":
-                            return 10
-                        elif button["text"] == "Level 4":
-                            return 15
-                        elif button["text"] == "Level 5":
-                            return 20
-    
-        # Draw the background image onto the screen
-        board_surface.blit(background_image, (0, 0))    
-        # Draw buttons
-        for button in buttons:
-            pygame.draw.rect(board_surface, GRAY, button["rect"])
-            pygame.draw.rect(board_surface, BLACK, button["rect"], 2)
-            text_surf = FONT.render(button["text"], True, BLACK)
-            text_rect = text_surf.get_rect(center=button["rect"].center)
-            board_surface.blit(text_surf, text_rect)
-    
-        # Update the display
-        pygame.display.flip()
 
 
 #GAME LOGIC
+def set_board(board):
+    """
+    draws the board and pieces on the surface, alternating colors for every other square, and drawing piece images where
+    given in the board matrix
+    """
+    for row in range(8):
+        for col in range(8):
+            rect = pygame.Rect(col * square_size, row * square_size, square_size, square_size)
+            if (row + col) % 2 == 0:
+                pygame.draw.rect(board_surface, (255, 206, 158), rect)
+            else:
+                pygame.draw.rect(board_surface, (209, 139, 71), rect)
+            if board[row][col] != " ":
+                piece_image = piece_images[("white" if board[row][col][0] == "w" else "black", board[row][col][1:])]
+                board_surface.blit(piece_image, rect)
+                
 def find_king(board):
+    """
+    searches through the board and returns a tuple of
+    tuples including the row and column of both kings
+    """
     bking_row, bking_col = np.where(board == "bking")
     wking_row, wking_col = np.where(board == "wking")
     return ((bking_row[0],bking_col[0]),(wking_row[0],wking_col[0]))
@@ -493,16 +531,7 @@ def get_valid_moves(en_passant,piece_type, piece_color, row, col, board):
 
             pass
     
-    return valid_moves    
-
-def draw(board):
-    #if both players only have king, 1 knight and bishops or 2knight no bishops left return True
-    pieces = ["wqueen","bqueen","wrook","brook","wpawn","bpawn"]
-    if not np.any(np.isin(pieces,board)) and ((np.sum(board == "wknight") < 3 and np.sum(board == "wbishop") == 0) or (np.sum(board == "wbishop") <2 and np.sum(board == "wknight") == 0)) and ((np.sum(board == "bknight") < 3 and np.sum(board == "bbishop") == 0) or (np.sum(board == "bbishop") < 2 and np.sum(board == "bknight") == 0)):
-        return True
-    
-    return False
-    
+    return valid_moves        
 
 def check_for_check(row, col, new_row, new_col, board):
    """
@@ -534,6 +563,14 @@ def check_for_check(row, col, new_row, new_col, board):
    return False
 
 def all_valid_moves(en_passant, piece_type,piece_color,row,col,board):
+    """
+    Returns a list of valid moves for a given chess piece at a given position on the board.
+    piece_type: the type of piece ("king", "queen", "rook", "bishop", "knight", or "pawn")
+    piece_color: the color of the piece ("white" or "black")
+    row: the row index of the piece's current position (0-7)
+    col: the column index of the piece's current position (0-7)
+    board: a 2D list representing the current state of the chess board
+    """
     valid_moves = []
     
     # Check the type of piece and get its valid moves
@@ -555,7 +592,7 @@ def all_valid_moves(en_passant, piece_type,piece_color,row,col,board):
                 elif board[new_row][new_col][0] != piece_color and not check_for_check(row,col,new_row,new_col,board):
                     valid_moves.append((new_row, new_col))
                     break
-                elif board[new_row][new_col][0] == piece_color:
+                elif board[new_row][new_col][0] == piece_color or board[new_row][new_col] != " ":
                     break
                 new_row += dy
                 new_col += dx
@@ -570,7 +607,7 @@ def all_valid_moves(en_passant, piece_type,piece_color,row,col,board):
                 elif board[new_row][new_col][0] != piece_color and not check_for_check(row,col,new_row,new_col,board):
                     valid_moves.append((new_row, new_col))
                     break
-                elif board[new_row][new_col][0] == piece_color:
+                elif board[new_row][new_col][0] == piece_color or board[new_row][new_col] != " ":
                     break
                 new_row += dy
                 new_col += dx
@@ -585,7 +622,7 @@ def all_valid_moves(en_passant, piece_type,piece_color,row,col,board):
                 elif board[new_row][new_col][0] != piece_color and not check_for_check(row,col,new_row,new_col,board):
                     valid_moves.append((new_row, new_col))
                     break
-                elif board[new_row][new_col][0] == piece_color:
+                elif board[new_row][new_col][0] == piece_color or board[new_row][new_col] != " ":
                     break
                 new_row += dy
                 new_col += dx
@@ -705,22 +742,14 @@ def highlight_valid_moves(piece_type, piece_color, row, col, board):
             valid_moves.append((bking_row,bking_col +2))
             #highlight in blue
             pygame.draw.rect(board_surface, (0,0,255), ((bking_col +2)*square_size, bking_row*square_size, square_size, square_size), width=4)
-    return valid_moves
-
-def set_board(board):
-    for row in range(8):
-        for col in range(8):
-            rect = pygame.Rect(col * square_size, row * square_size, square_size, square_size)
-            if (row + col) % 2 == 0:
-                pygame.draw.rect(board_surface, (255, 206, 158), rect)
-            else:
-                pygame.draw.rect(board_surface, (209, 139, 71), rect)
-            if board[row][col] != " ":
-                piece_image = piece_images[("white" if board[row][col][0] == "w" else "black", board[row][col][1:])]
-                board_surface.blit(piece_image, rect)
-            
+    return valid_moves            
     
 def check(board):
+    """
+    scans the board to see if the king is in check
+    If the king is in check returns true, the row and column of the attacker
+    and the color of the king in check.
+    """
     check = False
     rows = []
     cols = []
@@ -750,6 +779,9 @@ def check(board):
     return (check,rows,cols,king_color)
 
 def highlight_check(board):
+    """
+    if in check the function highlights the king, and the attacking piece in red
+    """
     in_check,row,col,king_color = check(board)
     (bking_row,bking_col),(wking_row,wking_col) = find_king(board)
 
@@ -768,6 +800,10 @@ def highlight_check(board):
         
 
 def checkmate(board):
+    """
+    if in check the function checks for any available moves to escape check,
+    if no moves are found the player is in checkmate, returns true and king_color
+    """
     no_moves = True
     valid_moves = []
     in_check, rows, cols, king_color = check(board)
@@ -789,6 +825,10 @@ def checkmate(board):
     return (False,king_color)
 
 def stalemate(board):
+    """
+    determines if the game is a stalemate, if the king is not in check, 
+    and no moves can be made returns True
+    """
     no_moves = True
     valid_moves = []
     in_check, rows, cols, king_color = check(board)
@@ -808,7 +848,21 @@ def stalemate(board):
             return True
     return False
 
+def draw(board):
+    """
+    determines if the game is a draw
+    """
+    #if both players only have a king and 2 knights, or a king and a bishop return True
+    pieces = ["wqueen","bqueen","wrook","brook","wpawn","bpawn"]
+    if not np.any(np.isin(pieces,board)) and ((np.sum(board == "wknight") < 3 and np.sum(board == "wbishop") == 0) or (np.sum(board == "wbishop") <2 and np.sum(board == "wknight") == 0)) and ((np.sum(board == "bknight") < 3 and np.sum(board == "bbishop") == 0) or (np.sum(board == "bbishop") < 2 and np.sum(board == "bknight") == 0)):
+        return True
+    
+    return False
+
 def game_over(board):
+    """
+    if the game ends by stalemate,chckmate of draw, returns true otherwise false
+    """
     if stalemate(board) or checkmate(board)[0] or draw(board):
         return True
     return False
@@ -915,7 +969,7 @@ while True:
                         en_passant = False
                         en_passant_turn = 0
                 #if pawn reaches the end of the board promote
-                if selected_row == 0:
+                if selected_row == 7:
                     board[selected_row][selected_col] = "bqueen"
                     promotion_sound.play()
                 
@@ -1159,7 +1213,7 @@ while True:
             button_rect = button_text.get_rect(center=(board_size // 2, winner_menu_height))
             #return to winning board
             return_button_text = font.render("See winning board", True, winner_text_color)
-            return_button_rect = button_text.get_rect(center=((board_size // 2) -68, winner_menu_height + 80))
+            return_button_rect = return_button_text.get_rect(center=((board_size // 2), winner_menu_height + 80))
             if show_menu and not close_menu:
                 #draw the menu
                 board_surface.blit(winner_menu_surface, (winner_menu_x, winner_menu_y))
@@ -1208,7 +1262,7 @@ while True:
             winner_menu_y = (board_size - winner_menu_height) // 2
             #return to board
             return_button_text = font.render("See final board", True, winner_text_color)
-            return_button_rect = button_text.get_rect(center=((board_size // 2) -60, winner_menu_height + 80))
+            return_button_rect = return_button_text.get_rect(center=((board_size // 2), winner_menu_height + 80))
             
             # Display win message or perform other actions
             font = pygame.font.Font(None, 50)
@@ -1266,7 +1320,7 @@ while True:
             winner_menu_y = (board_size - winner_menu_height) // 2
             #return to board
             return_button_text = font.render("See final board", True, winner_text_color)
-            return_button_rect = button_text.get_rect(center=((board_size // 2) -60, winner_menu_height + 80))
+            return_button_rect = return_button_text.get_rect(center=((board_size // 2), winner_menu_height + 80))
             # Display win message or perform other actions
             font = pygame.font.Font(None, 50)
             win_message = font.render("Draw!", True, winner_text_color)
