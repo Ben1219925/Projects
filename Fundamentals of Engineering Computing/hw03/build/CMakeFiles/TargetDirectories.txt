@@ -1,0 +1,3 @@
+/home/benjaminstone2/ece1400/hw03/build/CMakeFiles/test.dir
+/home/benjaminstone2/ece1400/hw03/build/CMakeFiles/edit_cache.dir
+/home/benjaminstone2/ece1400/hw03/build/CMakeFiles/rebuild_cache.dir
