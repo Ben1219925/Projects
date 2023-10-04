@@ -1,16 +1,46 @@
-The only place you should add or edit files is in the /src and /include directories.  Everything else will conflict with updates.
-
-To build and test your code, add your files "hwXX.c" and "hwXX.py" to the src and include directories.  Then (from this directory)
-
-mkdir build
-cd build
-cmake ..
-make
-
-This will compile your c code and copy your python code from the src directory.
-You can execute your code by typing
-./hw01
-python hw01.py
-
-You can run the test code by typing
-make test
+hw12a.c Factorial
+    Write a program to calculate the factorial of a number.
+    The input is an integer number on the command line.
+    The output should be the factorial of the number as <%d\n>.
+    For example if the use types “hw12a 5” it should print “120\n”
+    It should only accept positive integer numbers between 0 and 10 (inclusive).
+    Other values would print an error message “Invalid input\n”
+    It must use a recursive function call. I will print your code and verify this. If you
+    just use a for loop you will get no credit.
+    Remember that 0!=1
+hw12b.c Family tree
+    write a program that recursively navigates a family tree to find all relatives of a given person on the tree
+    use a linked list of structures to store the data
+    create a library hw12_lib.c for all functions except main.  You can define them as you wish, but at a minimum you will need something like this
+    bool load(struct list *, const char *filename)
+    bool printAll(struct list *)
+    bool printAncestors(struct list *, const char *name)
+    bool printDescendants(struct list *, const char *name)
+    Extra Challenge:
+      bool printSiblings(struct list *, const char *name)
+      bool printCousins(struct list *, const char *name)
+Inputs:
+    command line arguments:
+    ./hw12b <family csv filename> <name>
+    <family txt filename> is the name of a test file containing the list of names and parents, one per line, separated by whitespace
+    <name> <father> <mother>\n
+    each name is unique
+    if father or mother are unknown they will have the value "NULL"
+    <name> is the person for which to look up relatives
+Outputs:
+    for all lists: follow the tree along the male line as far as possible, then step back one generation to the female, then follow that male line etc.
+    Print all of <name>s known ancestors
+    "Ancestors of <name>: \n"
+    "<relation> <name>\n"
+    Relation is "father" or "mother" with any appropriate prefix. ie.  "great great grandmother Sue"
+    Print all of <name>s descendants
+    "Descendants of <name>: \n"
+    "<relation> <name>\n"
+    relation is "child", "grand child", "great grand child" ....
+    Extra challenge:
+    Print all of <name>s siblings
+    "Siblings of <name>:\n"
+    <name>\n"
+    Print all of <name>s first cousins
+    "Cousins of <name>:\n"
+    <name>\n"
