@@ -1,16 +1,65 @@
-The only place you should add or edit files is in the /src and /include directories.  Everything else will conflict with updates.
+HW06a.py Solving transcendental equations with scipy:
+1. Given the equation for the intrinsic carrier density find the value of T (in𝑛𝑖
+2 = 𝐵𝑇3𝑒𝑥𝑝(− 𝐸𝐺
+𝑘𝑇 )
+degrees Kelvin) for a given value of ni
+a. Write a python script with a function def FindT(ni, min, max, element) which returns the
+corresponding value for T
+i. It includes optional arguments min and max to limit the search space for the
+solution T. Min should default to 1 and max to 1000
+ii. Optional argument element is either “Si” “Ge” or “GeAs”. It should default to “Si”
+and choose the correct constants based on its value.
+iii. If no solution is found it should raise a ValueError exception
+b. Include in your python script a main function which takes ni min max element as
+command line arguments and prints the value for T as “T={:.2e}”
+. Call it from the command line for example:
+1. ./hw06a.py 10e10 100 400 Si
+ii. min, max and element are optional and should only be used if provided.
+iii. If it fails it should print “No solution”, an explanation of what went wrong and
+return -1
 
-To build and test your code, add your files "hwXX.c" and "hwXX.py" to the src and include directories.  Then (from this directory)
-
-mkdir build
-cd build
-cmake ..
-make
-
-This will compile your c code and copy your python code from the src directory.
-You can execute your code by typing
-./hw01
-python hw01.py
-
-You can run the test code by typing
-make test
+2: hw06b.py solving simultaneous equations using sympy
+Given the following 3 simultaneous current equations for this transistor circuit, solve for Id, Vo
+and Vs
+𝐼𝐷 = 𝐾𝑛(𝑉𝐷𝐷 − 𝑉𝑜 − 𝑉𝑇𝑁)2 * (1 + λ(𝑉𝐷𝐷 − 𝑉𝑜))
+𝐼𝐷 = 𝐾𝑛(𝑉𝑔 − 𝑉𝑠 − 𝑉𝑇𝑁)2 * (1 + λ(𝑉𝑜 − 𝑉𝑠))
+𝐼𝐷 = 𝐾𝑛( 𝑉𝑠 − 𝑉𝑇𝑁)2 * (1 + λ𝑉𝑠)
+1. A: write a function solve(Kn, VDD, Vg, Vtn, lambda) which returns (Id, Vo, Vs) as a tuple.
+a. It should default Vtn=1 and lambda=0 if they are not given.
+b. Since it is a polynomial function it will have many solutions. Some will be
+complex some will be real, but invalid, but only one should solve the circuit. Use
+a for loop to go through the solutions returned by sym.solve and only return teh
+valid one.
+i. Make sure it only returns real valued answers. Sometimes the value will
+be reported as complex due to rounding errors even though it is real. So
+f it is complex look at the imaginary part and see if it is negligibly small
+(1+j1e-25) is actually real
+ii. Verify that the answers are valid for the given problem.
+1. Since this circuit has no negative supply, Vs, Vo and Ig must be
+positive.
+2. Since this circuit is powered by a DC supply = VCC, no voltages
+can be above VCC
+iii. If no solution is found it should raise a ValueError exception.
+2. Include a main function that takes Kn Vdd Vg Vtn and Lambda as command line
+arguments and prints the answer as
+a. “Id={:.2e} Vo={:.2e} Vs={:.2e}”
+b. If no valid solution is found, then main program should print “No solution found”
+and return -1
+c. For example: ./hw06b.py 1e-3 5 3 1 0.1
+i. Should print “Id=2.94e-04 Vo=3.49e+00 Vs=1.51e+00”
+3: HW06c.py Creating graphs with matplotlib, reading data from files:
+1. Use numpy or pandas to read a spice output file and plot it as the three currents vs time.
+With the x axis being time and the y axis being the current in mA.
+a. You could also read the data with a simple for loop, but numpy and pandas
+makes it much easier.
+2. The data is in the file “data.correct” in the test directory
+3. Label the plot ”Spice Output” and the x-axis “time (sec)” and the y-axis “current (mA)”
+4: HW06d.py Complex math with scipy or python controls libraries
+In circuits, signals and controls you will come across complex numbers and algebra quite often.
+Scipy and its associated libraries and python controls library will help you make quick work of
+these jobs.
+Circuit responses and physical systems are often modeled using Laplace transforms and the
+complex “s” domain.
+Given a complex polynomial 𝐻(𝑠) = 5(𝑠+5)(𝑠+3)(𝑠+1)/(𝑠+6)(𝑠+12)(𝑠+5)
+1. Plot the Bode Plot response from frequencies 10mHz to 10Hz
+2. Plot the poles and zeros locations
