@@ -1,16 +1,13 @@
-The only place you should add or edit files is in the /src and /include directories.  Everything else will conflict with updates.
-
-To build and test your code, add your files "hwXX.c" and "hwXX.py" to the src and include directories.  Then (from this directory)
-
-mkdir build
-cd build
-cmake ..
-make
-
-This will compile your c code and copy your python code from the src directory.
-You can execute your code by typing
-./hw01
-python hw01.py
-
-You can run the test code by typing
-make test
+hw02a.py:
+  Print the numbers from 1 to 5
+  using a for loop
+  using a while loop
+hw02b.py:
+  Print the numbers from one to 20 along with whether each number is even or odd and prime or composite. 
+  Use a function isEven(x) which returns True if a number is even and False otherwise.
+  Use a function isPrime(x) which returns True if a number is prime and False otherwise.
+  Determine if a number is prime using a loop.
+  Loop through the numbers 1 to 20 and for each number print:
+  <number>\t<"even" or "odd">\t<"prime" or "composite">\n
+hw02c.py:
+  Write a program to identify a component based on a character as would be used in a SPICE netlist
