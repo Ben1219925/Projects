@@ -1,1 +1,0 @@
-This is just a placeholder for the Git repo to create the include folder.
