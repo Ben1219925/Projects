@@ -1,16 +1,50 @@
-The only place you should add or edit files is in the /src and /include directories.  Everything else will conflict with updates.
+Create a python library "hw05_lib.py" in the src directory.
+    Define a class named "resistor" to contain the information for a resistor
+    data fields:
+      name (string)
+      positive node name (string)
+      negative node name (string)
+      value (float)
+    functions:
+      __init__(string)
+        create a new resistor instance with values from the given string.
+      current(float voltage)
+        returns float current through the resistor for given voltage
+      read(string)
+    
+        fills in the resistor class data from a string
+          If string does not start with an "R" or "r" raise an ValueError and print "Resistor must start with an R: "+ the offending string
+          If it is missing one of the values raise a ValueError and print "Resistor requires at least 4 values: "+ the offending string
+    print()
+    
+      prints out the contents of a resistor as
+    
+        <name>\t<positive node>\t<negative node>\t<value (format %.2e)>\n
 
-To build and test your code, add your files "hwXX.c" and "hwXX.py" to the src and include directories.  Then (from this directory)
-
-mkdir build
-cd build
-cmake ..
-make
-
-This will compile your c code and copy your python code from the src directory.
-You can execute your code by typing
-./hw01
-python hw01.py
-
-You can run the test code by typing
-make test
+Define a library function (not part of resistor class)
+  decodeValue(string)
+    take a string value formatted according SPICE and return a float value
+     argument is a string holding a value.  This string may have suffixes such as "1.5k" "2.3Meg" "1.5u"
+    valid suffixes are: T=1e12, G=1e9, Meg or X=1e6, k=1e3, m=1e-3, u=1e-6, n=1e-9, p=1e-12, f=1e-15, a=1e-18
+    they are case insensitive
+    If it is not a valid value the raise a ValueError and print "Invalid Value: "+ the offending string
+  All of the above should raise exceptions as appropriate on failure
+  Write a test program "hw05a.py" that imports the library and prompts the user to enter the parameters of a resistor on a single line separated by any whitespace (any number of spaces or tabs) such as
+  R1 VCC GND 1k
+  prompt the user "Enter a resistor: "
+  parse the string that the user inputs into a Resistor structure. 
+  If the input is invalid then print "Invalid input" and exit
+  If the input is valid then print the resistor information using the print function
+  prompt the user "Enter a voltage: "
+  parse the input string in to a value.  The user may enter any valid SPICE or float value such as 1.23 or 5k.
+  If the input is invalid then print "Invalid value" and exit
+  Calculate the current using the current function and print it to the screen as in scientific notation with 2 decimal precision.
+  "I = <value %.2e>\n"
+Write a test program that
+takes a netlist file as a command line parameter
+./hw05b.py <netlist filename>
+If no filename is given, exit with message "No netlist file given"
+reads the file, creating a list of resistor classes from the lines of the file.
+If any lines are invalid, print "Resistor must start with and R" and skip it
+loop through the list of resistors
+Print each resistor
