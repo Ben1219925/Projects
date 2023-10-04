@@ -1,16 +1,30 @@
-The only place you should add or edit files is in the /src and /include directories.  Everything else will conflict with updates.
+hw03a.py Solves the quadratic equation for an equation of the form Ax^2 + Bx + C = 0
+  Function that takes the coefficients A,B,C and returns the solutions as a tuple.
+  it works with real and complex solutions
 
-To build and test your code, add your files "hwXX.c" and "hwXX.py" to the src and include directories.  Then (from this directory)
+hw03b.py Creates arrays to hold 5 student names and 5 grades.  Fill them in from this table (in order)
+  Larry	75
+  Moe	85
+  Curly	65
+  Sleepy	48
+  Happy	98
+  print the name and score of all students in alphabetical order by name
+  <name>\t<grade>\n
+  print the name and score of all students in the order or increasing grade
+  <name>\t<grade>\n
 
-mkdir build
-cd build
-cmake ..
-make
+hw03c.py  The current through a diode is given by ID = IS[e^(q*VD/n*k*T)-1]
+  where:
+    n=ideality constant,
+    k=Boltzmanns constant = 
+    T is temperature in Kelvin
+    q is the electron charge = 
+ 
+  Write a function diodeCurrent(Vd,Is,T,n) which returns the diode current.
+  print the results as:  "Id = <Id> for vd = <vd><\n"  in scientific notation with 3 places of precision after the decimal.
 
-This will compile your c code and copy your python code from the src directory.
-You can execute your code by typing
-./hw01
-python hw01.py
-
-You can run the test code by typing
-make test
+hw03d.py  Given two equations: Ax+By+C and Dx+Ey=F
+ where A-F are variables, write a program that solves the equations in general. 
+Write a function solve(A,B,C,D,E,F) which returns the solution as a tuple (x,y)
+write a main function that tests it on A=2, B=5, C=7,D=4,E=-6,F=12
+print the result as "x = <x>\ty = <y>\n" as floats with 2 decimals
