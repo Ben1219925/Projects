@@ -1,3 +1,1 @@
-This is the base directory for all of the homeworks.  change to the subdirectory for the assignment you are working on.
 
-Submit your code by creating a git repoistory in your home directory on ece-linux-srv named ece1400.git and push your solutions to that repository.  For grading, I will simply clone that repository, cd to the appropriate homework directory and run "make test"  so you are encouraged to test that process and make sure it works!
