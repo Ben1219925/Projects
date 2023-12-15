@@ -1,0 +1,15 @@
+This project is a culmination of 3 difffernet communication projects.
+
+The project is designed to accept an ascii key entered into the Python program that will be interpreted by the controller and execute a specific command:
+0: stop transmitting
+2: display the data being read from the ADC by the i2c communication protocol using data from 6 switches
+3: display the data being read from the ADC by the i2c communication protocol using a sin wave saved to the block memory
+4: display the data being sent to the DAC by the spi communication protocol using data from 6 switches
+5: display the data being sent to the DAC by the spi communication protocol using a sin wave saved to the block memory
+8: display the current state of the controllers for the i2c and spi using data from 6 switches
+9: display the current state of the controllers for the i2c and spi using a sin wave saved to the block memory
+
+These commands will light up 6 lights on the FPGA and will also graph the voltage on a python plot.
+
+All communication protocols were hand constructed, including the UART receiver and transmitter, spi, and i2c.
+Details on the project are found in the specs PDF.
