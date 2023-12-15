@@ -1,4 +1,4 @@
-This project is a culmination of 3 difffernet communication projects.
+This project is a culmination of 3 difffernet communication projects and is fully functional on the Basys3 3 FPGA.
 
 The project is designed to accept an ascii key entered into the Python program that will be interpreted by the controller and execute a specific command:
 0: stop transmitting
